@@ -87,8 +87,9 @@ def extract_from_pdf(file_bytes: bytes) -> dict | None:
 
 def extract_from_excel(file_bytes: bytes) -> dict:
     df = pd.read_excel(BytesIO(file_bytes))
+    print("date " + str(df["Date"].iloc[0]).split()[0])
     return {
-        "Date": str(df["Date"].iloc[0]),
+        "Date": str(df["Date"].iloc[0]).split()[0],
         "Visitors": int(df["Visitors"].iloc[0]),
         "Sales": float(df["Sales"].iloc[0])
     }
@@ -179,7 +180,7 @@ def update_report(new_rows: list[dict]) -> None:
 
     updated = pd.concat([existing, pd.DataFrame(new_rows)], ignore_index=True)
 
-    # Prevent duplicate reports from being added twice
+    # Prevent duplicate reports of the same date from being added twice
     updated = updated.drop_duplicates(subset=["Date"])
 
     # Keep TOTAL outside the Excel table so sorting does not affect it
