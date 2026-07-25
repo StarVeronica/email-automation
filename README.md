@@ -113,6 +113,18 @@ Visitors: 70
 Sales: $576.12
 ```
 
+## Input Flexibility
+
+The parser accepts several common formatting variations:
+
+- Sales values with or without a dollar sign
+- Extra whitespace between labels and values
+- Metrics provided in any order
+- Multiple date formats, including:
+  - 2026-07-24
+  - 2026/07/24
+  - 07/24/2026
+
 ## Screenshots
 
 

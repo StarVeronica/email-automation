@@ -10,6 +10,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from dotenv import load_dotenv
 from openpyxl.worksheet.table import Table, TableStyleInfo
+from datetime import datetime
 import logging
 
 # Load email credentials from .env
@@ -61,17 +62,42 @@ def create_report_file() -> None:
         )
 
 
+def build_metrics(date: str, visitors, sales) -> dict:
+    return {
+        "Date": parse_date(date),
+        "Visitors": int(visitors),
+        "Sales": float(str(sales).replace("$", "").strip())
+    }
+
+
+def parse_date(date_str: str) -> str:
+    # Support multiple date formats for flexibility
+    formats = [
+        "%Y-%m-%d",
+        "%Y/%m/%d",
+        "%m/%d/%y"
+    ]
+
+    for fmt in formats:
+        try:
+            return datetime.strptime(date_str.strip(), fmt).strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+
+    raise ValueError(f"Unsupported date format: {date_str}")
+
+
 def extract_metrics_from_text(text: str) -> dict | None:
     visitors = re.search(r"Visitors:\s+(\d+)", text)
     sales = re.search(r"Sales:\s+(\$?\d+\.\d+)", text)
-    date = re.search(r"Date:\s+(\d{4}-\d{2}-\d{2})", text)
+    date = re.search(r"Date:\s+([0-9/\-]+)", text)
 
     if visitors and sales and date:
-        return {
-            "Date": date.group(1),
-            "Visitors": int(visitors.group(1)),
-            "Sales": float(sales.group(1).replace("$",""))
-        }
+        return build_metrics(
+            date.group(1),
+            visitors.group(1),
+            sales.group(1)
+        )
     return None
 
 
@@ -87,21 +113,20 @@ def extract_from_pdf(file_bytes: bytes) -> dict | None:
 
 def extract_from_excel(file_bytes: bytes) -> dict:
     df = pd.read_excel(BytesIO(file_bytes))
-    print("date " + str(df["Date"].iloc[0]).split()[0])
-    return {
-        "Date": str(df["Date"].iloc[0]).split()[0],
-        "Visitors": int(df["Visitors"].iloc[0]),
-        "Sales": float(df["Sales"].iloc[0])
-    }
+    return build_metrics(
+        str(df["Date"].iloc[0]).split()[0],
+        df["Visitors"].iloc[0],
+        df["Sales"].iloc[0]
+    )
 
 
 def extract_from_csv(file_bytes: bytes) -> dict:
     df = pd.read_csv(BytesIO(file_bytes))
-    return {
-        "Date": str(df["Date"].iloc[0]),
-        "Visitors": int(df["Visitors"].iloc[0]),
-        "Sales": float(df["Sales"].iloc[0])
-    }
+    return build_metrics(
+        str(df["Date"].iloc[0]),
+        df["Visitors"].iloc[0],
+        df["Sales"].iloc[0]
+    )
 
 
 def process_email(msg: email.message.Message) -> list[dict]:
@@ -228,6 +253,13 @@ def format_report() -> None:
     # Last row is TOTAL, row before it is blank
     total_row = ws.max_row
     last_data_row = total_row - 2
+
+    # Format Date and Sales columns
+    for row in range(2, total_row + 1):
+        ws[f"A{row}"].number_format = "yyyy-mm-dd"
+
+    for row in range(2, total_row + 1):
+            ws[f"C{row}"].number_format = "$#,##0.00"
 
     # Body formatting (exclude blank row and total)
     for row_num in range(2, last_data_row + 1):
