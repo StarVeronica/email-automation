@@ -75,6 +75,11 @@ def parse_date(date_str: str) -> str:
     formats = [
         "%Y-%m-%d",
         "%Y/%m/%d",
+        "%y-%m-%d",
+        "%y/%m/%d",
+        "%m-%d-%Y",
+        "%m/%d/%Y",
+        "%m-%d-%y",
         "%m/%d/%y"
     ]
 
@@ -89,7 +94,7 @@ def parse_date(date_str: str) -> str:
 
 def extract_metrics_from_text(text: str) -> dict | None:
     visitors = re.search(r"Visitors:\s+(\d+)", text)
-    sales = re.search(r"Sales:\s+(\$?\d+\.\d+)", text)
+    sales = re.search(r"Sales:\s+(\$?\d+(?:\.\d+)?)", text)
     date = re.search(r"Date:\s+([0-9/\-]+)", text)
 
     if visitors and sales and date:

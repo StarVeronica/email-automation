@@ -2,9 +2,17 @@
 
 ## Overview
 
-Email Report Automation System is a Python application that automatically collects business metrics from emails and generates a formatted Excel report.
+Email Report Automation System is a Python application that automatically extracts business metrics from emails and generates a formatted Excel report.
 
 The program connects to a Gmail inbox, retrieves reports from a specified sender, extracts data from email content and supported attachments, and updates a centralized Excel spreadsheet. The generated report includes automatic totals, filtering, sorting, and professional formatting.
+
+### Generated Report
+
+![Generated Report](screenshots/report-preview.png)
+
+### Sorting Demo
+
+![Sorting Demo](screenshots/sorting-demo.gif)
 
 ## Features
 
@@ -20,6 +28,12 @@ The program connects to a Gmail inbox, retrieves reports from a specified sender
 * Includes Excel filtering and sorting
 * Uses environment variables for secure credential storage
 * Logs errors for easier debugging
+
+## Workflow
+
+The application follows the process below:
+
+![Workflow Diagram](screenshots/workflow-diagram.png)
 
 ## Technologies Used
 
@@ -113,6 +127,8 @@ Visitors: 70
 Sales: $576.12
 ```
 
+![PDF Example](screenshots/pdf-example.png)
+
 ## Input Flexibility
 
 The parser accepts several common formatting variations:
@@ -124,9 +140,25 @@ The parser accepts several common formatting variations:
   - 2026-07-24
   - 2026/07/24
   - 07/24/2026
+  - 07-24-26
 
-## Screenshots
+## Project Structure
 
+```text
+email-automation/
+├── email_analyzer.py
+├── requirements.txt
+├── README.md
+├── examples/
+│   ├── sample_report.pdf
+│   ├── sample_report.xlsx
+│   └── sample_report.csv
+└── screenshots/
+    ├── report-preview.png
+    ├── pdf-example.png
+    ├── workflow-diagram.png
+    └── sorting-demo.gif
+```
 
 ## Author
 
