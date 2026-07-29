@@ -146,18 +146,20 @@ The parser accepts several common formatting variations:
 
 ```text
 email-automation/
-├── email_analyzer.py
-├── requirements.txt
-├── README.md
 ├── examples/
+│   ├── sample_report.csv
 │   ├── sample_report.pdf
-│   ├── sample_report.xlsx
-│   └── sample_report.csv
-└── screenshots/
-    ├── report-preview.png
-    ├── pdf-example.png
-    ├── workflow-diagram.png
-    └── sorting-demo.gif
+│   └── sample_report.xlsx
+├── screenshots/
+│   ├── pdf-example.png
+│   ├── report-preview.png
+│   ├── sorting-demo.gif
+│   └── workflow-diagram.png
+├── .env.example
+├── .gitignore
+├── main.py
+├── README.md
+└── requirements.txt
 ```
 
 ## Author
